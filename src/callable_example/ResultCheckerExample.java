@@ -21,6 +21,13 @@ public class ResultCheckerExample implements Runnable {
             for (Iterator<RunnableFuture<Integer>> futureIterator = runnableFutureList.iterator(); futureIterator.hasNext(); ) {
                 RunnableFuture<Integer> future = futureIterator.next();
 
+                if (completedTask == 2) {
+                    completedTask++;
+                    future.cancel(true);
+                    System.out.println("Задача остановлена, результат её работы не требуется");
+                    break;
+                }
+
                 if (future.isDone()) {
                     completedTask++;
                     try {
@@ -31,11 +38,7 @@ public class ResultCheckerExample implements Runnable {
                     }
                 }
 
-                if (completedTask == 2) {
-                    completedTask++;
-                    future.cancel(true);
-                    System.out.println("Задача остановлена, результат её работы не требуется");
-                }
+
             }
 
         }
