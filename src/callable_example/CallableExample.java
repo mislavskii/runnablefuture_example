@@ -2,7 +2,7 @@ package callable_example;
 
 import java.util.concurrent.Callable;
 
-public class CallableExample implements Callable<Integer> {
+public class CallableExample implements Callable<CallableExample> {
 
     private final Integer timeToCompute;
     private final String taskName;
@@ -16,10 +16,14 @@ public class CallableExample implements Callable<Integer> {
         return taskName;
     }
 
+    public Integer getTimeToCompute() {
+        return timeToCompute;
+    }
+
     @Override
-    public Integer call() throws Exception {
+    public CallableExample call() throws Exception {
         System.out.println(getTaskName() + " выполнится за: " + timeToCompute + " миллисекунд");
         Thread.sleep(timeToCompute);
-        return timeToCompute;
+        return this;
     }
 }

@@ -7,9 +7,9 @@ import java.util.concurrent.RunnableFuture;
 
 public class ResultCheckerExample implements Runnable {
 
-    private final List<RunnableFuture<Integer>> runnableFutureList;
+    private final List<RunnableFuture<CallableExample>> runnableFutureList;
 
-    public ResultCheckerExample(List<RunnableFuture<Integer>> runnableFutureList) {
+    public ResultCheckerExample(List<RunnableFuture<CallableExample>> runnableFutureList) {
         this.runnableFutureList = runnableFutureList;
     }
 
@@ -18,23 +18,25 @@ public class ResultCheckerExample implements Runnable {
         int completedTask = 0;
 
         while (completedTask != 3) {
-            for (Iterator<RunnableFuture<Integer>> futureIterator = runnableFutureList.iterator(); futureIterator.hasNext(); ) {
-                RunnableFuture<Integer> future = futureIterator.next();
-
+            for (Iterator<RunnableFuture<CallableExample>> futureIterator = runnableFutureList.iterator(); futureIterator.hasNext(); ) {
+                RunnableFuture<CallableExample> future = futureIterator.next();
+                if (completedTask == 2) {
+                    completedTask++;
+                    future.cancel(true);
+                    System.out.println("Оставшаяся задача остановлена, результат её работы не требуется.");
+                    break;
+                }
                 if (future.isDone()) {
                     completedTask++;
                     try {
-                        System.out.println("Задача выполнилась за: " + future.get() + " миллисекунд");
+                        var task = future.get();
+                        System.out.printf(
+                                "%s выполнилась за: %d миллисекунд%n", task.getTaskName(), task.getTimeToCompute()
+                        );
                         futureIterator.remove();
                     } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
                     }
-                }
-
-                if (completedTask == 2) {
-                    completedTask++;
-                    future.cancel(true);
-                    System.out.println("Задача остановлена, результат её работы не требуется");
                 }
             }
 
